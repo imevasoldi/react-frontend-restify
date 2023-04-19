@@ -1,17 +1,19 @@
 import { useState } from 'react'
 
-const FormData = ( { updateUI, token } ) => {
-    const [count, setCount] = useState(0)
+const FormData = ( { updateUI, token, sendError } ) => {
     const [userInputs, setUserInputs] = useState ({firstName: "john", lastName:"smith", address: "", ssn: ""})
+    
+    function reset(){
+      setUserInputs({firstName:"", lastName:"", address:"", ssn: ""})
+      sendError(null)
+    }
     
     function handleChange(event){
       setUserInputs(prevInputs => {return {...prevInputs, [event.target.name]: event.target.value}})
     }
 
-    async function sendUser(){
+    function sendUser(){
       let headersList = {
-        "Accept": "*/*",
-        "User-Agent": "Thunder Client (https://www.thunderclient.com)",
         "Authorization": "Bearer " + token,
         "Content-Type": "application/json"
        }
@@ -23,16 +25,24 @@ const FormData = ( { updateUI, token } ) => {
          "ssn": userInputs.ssn
        });
        
-       let response = await fetch("http://localhost:8081/api/members", { 
+       fetch("http://localhost:8081/api/members", { 
          method: "POST",
          body: bodyContent,
          headers: headersList
-       });
-       
-       let data = await response.json();
-       console.log(data);
-       updateUI(data)
-
+       })
+       .then(res => {
+          return res.json()
+        })
+        .then(data => {
+          console.log("despues de json",data);
+          if (data.code) {
+            sendError(data.message)
+          }else{
+            sendError(null)
+            updateUI(data)
+          }
+       })
+       .catch(error => sendError(error.message))
     }
     
     return(
@@ -72,7 +82,7 @@ const FormData = ( { updateUI, token } ) => {
         </label>
       </form>
       <div className="card">
-        <button onClick={() => setUserInputs({firstName:"", lastName:"", address:"", ssn: ""})}>
+        <button onClick={() => reset()}>
           Reset
         </button>
         <button onClick={() => sendUser()}>

@@ -5,7 +5,7 @@ import ShowData from './Components/showData'
 import FormData from './Components/formData'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [error, setError] = useState(null)
   const [data, setData] = useState([])
   const [token, setToken] = useState(null)
   
@@ -31,8 +31,12 @@ function App() {
         "password": "connor"
       })
       })
-      .then(res => res.json())
+      .then(res => {
+        if (res.status !== 200) return null;
+        return res.json()
+      })
       .then(data => setToken(data.token))
+      .catch(error => setError(error.message))
     },[])
 
   useEffect(()=>{
@@ -44,38 +48,18 @@ function App() {
       },
     })
     .then(res => res.json())
-    // .then(data => console.log("withToken",data))
     .then(data => token ? setData(data) : console.log("withToken",data))
+    .catch(error => setError(error.message))
   },[token])
   
   return (
     <div className="App">
       <Nav/>
       <div className='container'>
-      <FormData updateUI={buildData} token={token}/>
-      <ShowData data={data}/>
-        
+        <FormData updateUI={buildData} token={token} sendError={setError}/>
+        <ShowData data={data}/>
       </div>
-      {/* <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p> */}
+      {error && <div>{error}</div>}
     </div>
   )
 }
