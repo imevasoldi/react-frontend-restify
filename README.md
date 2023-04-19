@@ -17,7 +17,7 @@ La pagina debe poder comunicarse con la API de este repositorio. La misma consta
 ### Start API server
 * Clonar este repositorio
 * Instalar las dependencias
-* Usar el comando "serve"
+* Usar el comando "serve" (sincronizar con node16)
 
 ### Validaciones de la API
 * **firstName, lastName y address:** Mas de 1 caracter, sin espacios a los costados (trim)
@@ -34,3 +34,13 @@ La pagina debe poder comunicarse con la API de este repositorio. La misma consta
 * Se puede usar POSTMAN para verificar el funcionamento de la API
 * Crear un archivo README.md para indicar como se debe utilizar su desarrollo
 * Subir a un repositior git con privilegios publicos de lectura y compartir el link como resultado
+
+### Correr el react-frontend
+
+* Clonar el repo (git clone https://github.com/imevasoldi/react-frontend-restify.git)
+* navegar a la carpeta "node16/react-frontend-restify"
+* npm install
+* npm run dev
+
+
+
